@@ -1,0 +1,17 @@
+.wrapper {
+    position: fixed;
+    top: 100px;
+    right: 28px;
+    animation: toast-animation ease .2s;
+}
+
+@keyframes toast-animation {
+    from {
+        opacity: 0;
+        transform: translateX(calc(100% + 28px));
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
