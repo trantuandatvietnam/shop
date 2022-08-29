@@ -1,9 +1,9 @@
-import { useContext } from "react"
-import { AppContext } from "../../../app.context";
+import { useContext } from "react";
+import { EmployeeContext } from "../contexts/employee-data.context";
 
 function useShowEmployeeNameById(id: number) {
-    const appData = useContext(AppContext);
-    const name = appData?.getEmployeeList().find((employee) => employee.id === id)?.name
+    const employeeData = useContext(EmployeeContext);
+    const name = employeeData?.getEmployeeList().find((employee) => employee.id === id)?.name
   return (
     name
   )

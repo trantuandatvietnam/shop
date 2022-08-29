@@ -11,4 +11,6 @@ export interface ISearchProps {
     startDate: string,
     setEndDate: Dispatch<SetStateAction<string>>,
     endDate: string,
+    onClearSearch: () => void,
+    filterList: string[]
 }

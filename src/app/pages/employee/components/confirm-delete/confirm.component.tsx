@@ -8,22 +8,23 @@ import {
 } from '@mui/material';
 import { useContext } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { AppContext } from '../../../app.context';
-import { HttpService } from '../../../shared/services/http.service';
-import warningImg from '../imgs/Warning.png';
-import useShowEmployeeNameById from './useShowEmployeeNameById';
+import { AppContext } from '../../../../app.context';
+import { HttpService } from '../../../../shared/services/http.service';
+import { EmployeeContext } from '../../contexts/employee-data.context';
+import { IConfirmProps } from '../../models/confirm-delete.props.model';
+import useShowEmployeeNameById from '../../utils/useShowEmployeeNameById';
+import warningImg from '../../imgs/Warning.png';
 
 function ConfirmDeleteDialog({
   showConfirmDelete,
   setShowConfirmDelete,
-}: {
-  showConfirmDelete: boolean;
-  setShowConfirmDelete: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+}: IConfirmProps) {
+  const appData = useContext(AppContext);
+  const employeeData = useContext(EmployeeContext);
+
   const [searchParams] = useSearchParams();
   const idEmployee = searchParams.get('id');
   const employeeName = useShowEmployeeNameById(+idEmployee!);
-  const appData = useContext(AppContext);
   const navigate = useNavigate();
 
   const handleClose = () => {
@@ -35,7 +36,7 @@ function ConfirmDeleteDialog({
     appData?.onShowLoader(true);
     const res = await HttpService.delete(`employee/delete/${idEmployee}`);
     appData?.onShowLoader(false);
-    appData?.deleteEmployee(res.data.data.id);
+    employeeData?.deleteEmployee(res.data.data.id);
     handleClose();
     appData?.setToastData({
       type: 'success',

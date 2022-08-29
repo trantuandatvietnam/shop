@@ -1,19 +1,22 @@
-import { useContext, useState } from 'react';
-import { AppContext } from '../../../../app.context';
+import { useContext, useEffect, useState } from 'react';
+import { EmployeeContext } from '../../contexts/employee-data.context';
 import SearchTemplate from './search.template';
 
 function FilterComponent() {
-  const appData = useContext(AppContext);
+  const employeeData = useContext(EmployeeContext);
+
   const [search, setSearch] = useState({
-    field: '',
+    field: 'Name',
     searchValue: '',
   });
   const [startDate, setStartDate] = useState(new Date().toString());
   const [endDate, setEndDate] = useState(new Date().toString());
+  const [filterList, setFilterList] = useState<string[]>([]);
 
   const handleSearch = () => {
+    // if (!search.searchValue) return;
     if (search.field === 'StartDate') {
-      appData?.updateFilterEmployee({
+      employeeData?.updateFilterEmployee({
         field: search.field,
         search:
           new Date(startDate).toISOString().split('T')[0] +
@@ -21,12 +24,37 @@ function FilterComponent() {
           new Date(endDate).toISOString().split('T')[0],
       });
     } else {
-      appData?.updateFilterEmployee({
+      employeeData?.updateFilterEmployee({
         field: search.field,
         search: search.searchValue,
       });
     }
   };
+
+  const handleClearSearch = () => {
+    setSearch({
+      field: 'Name',
+      searchValue: '',
+    });
+    employeeData?.updateFilterEmployee({
+      field: 'Name',
+      search: '',
+    });
+  };
+
+  useEffect(() => {
+    if (
+      employeeData?.getEmployeeList() &&
+      employeeData?.getEmployeeList().length > 0
+    ) {
+      const filters = Object.keys(employeeData?.getEmployeeList()[0]);
+      setFilterList(
+        filters
+          .filter((item: string) => item !== 'dateCreated')
+          .map((item) => item.charAt(0).toUpperCase() + item.slice(1)),
+      );
+    }
+  }, [employeeData]);
 
   return (
     <SearchTemplate
@@ -37,6 +65,8 @@ function FilterComponent() {
       setStartDate={setStartDate}
       endDate={endDate}
       setEndDate={setEndDate}
+      onClearSearch={handleClearSearch}
+      filterList={filterList}
     />
   );
 }

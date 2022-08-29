@@ -1,4 +1,5 @@
 export function formatDate(input: any) {
+    if(!input) return;
     let datePart = input.match(/\d+/g),
       year = datePart[0].substring(2), // get only two digits
       month = datePart[1],

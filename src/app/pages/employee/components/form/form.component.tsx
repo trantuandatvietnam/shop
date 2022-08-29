@@ -1,10 +1,14 @@
-import { ChangeEvent, FormEvent, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { HttpService } from '../../../../shared/services/http.service';
-import { IDialogProp } from '../../models/dialog.prop';
+import { employeeForm } from '../../models/dialog.prop';
 import FormTemplate from './form.template';
+// import moment from 'moment';
 import moment from 'moment';
-import { AppContext } from '../../../../app.context';
 import { useSearchParams } from 'react-router-dom';
+import { AppContext } from '../../../../app.context';
+import { EmployeeContext } from '../../contexts/employee-data.context';
+import { IEmployeeForm } from '../../models/employee-form.model';
+import { IFormProps } from '../../models/form.props';
 
 export const initEmployeeForm = {
   name: '',
@@ -14,47 +18,20 @@ export const initEmployeeForm = {
   position: '',
 };
 
-function FormComponent({
-  showDialog,
-  setShowDialog = () => null,
-}: IDialogProp) {
+function FormComponent({ setShowDialog = () => null }: IFormProps) {
   const [URLSearchParams] = useSearchParams();
   const idQueryURL = URLSearchParams.get('id');
 
   const appData = useContext(AppContext);
-  const [employeeForm, setEmployeeForm] = useState<{
-    name: string;
-    age: number;
-    address: string;
-    startDate: string;
-    position: string;
-  }>(initEmployeeForm);
+  const employeeData = useContext(EmployeeContext);
 
-  const handleChangeForm = (e: ChangeEvent<HTMLInputElement>) => {
-    if (!setEmployeeForm || !employeeForm) return;
-    setEmployeeForm({ ...employeeForm, [e.target.name]: e.target.value });
-  };
+  const [employeeForm, setEmployeeForm] =
+    useState<IEmployeeForm>(initEmployeeForm);
 
-  const handleChangeAge = (e: ChangeEvent<HTMLInputElement>) => {
-    const isNumber = /^[0-9]+$/;
-    if (!setEmployeeForm || !employeeForm) return;
-    if (isNumber.test(e.target.value) || !e.target.value) {
-      setEmployeeForm({ ...employeeForm, age: +e.target.value });
-    }
-  };
-
-  const handleChangeDate = (e: ChangeEvent<HTMLInputElement>) => {
-    const date = new Date(e.target.value).toISOString().split('T')[0];
-
-    if (!setEmployeeForm || !employeeForm) return;
-    setEmployeeForm({ ...employeeForm, [e.target.name]: date });
-  };
-
-  const handleSubmitForm = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmitForm = async (formValues: employeeForm) => {
     try {
       const newEmployee = {
-        ...employeeForm,
+        ...formValues,
         dateCreated: moment().format().split('T')[0],
       };
 
@@ -65,7 +42,7 @@ function FormComponent({
           newEmployee,
         );
         const employeeUpdated = res.data.data;
-        appData?.updateEmployee(employeeUpdated);
+        employeeData?.updateEmployee(employeeUpdated);
         appData?.setToastData({
           show: true,
           message: 'Update employee successfully!',
@@ -74,7 +51,7 @@ function FormComponent({
       } else {
         const res = await HttpService.post('employee/create', newEmployee);
         const employeeCreated = res.data.data;
-        appData?.createEmployee(employeeCreated);
+        employeeData?.createEmployee(employeeCreated);
         appData?.setToastData({
           show: true,
           message: 'Create an employee successfully!',
@@ -96,7 +73,7 @@ function FormComponent({
 
   useEffect(() => {
     if (idQueryURL) {
-      const employeeList = appData?.getEmployeeList();
+      const employeeList = employeeData?.getEmployeeList();
       const employeeFound = employeeList?.find(
         (employee) => employee.id === +idQueryURL,
       );
@@ -111,18 +88,13 @@ function FormComponent({
     return () => {
       setEmployeeForm(initEmployeeForm);
     };
-  }, [idQueryURL, setShowDialog, appData]);
+  }, [idQueryURL, setShowDialog, employeeData]);
 
   return (
     <FormTemplate
       employeeForm={employeeForm}
-      setEmployeeForm={setEmployeeForm}
-      showDialog={showDialog}
       setShowDialog={setShowDialog}
       onSubmit={handleSubmitForm}
-      handleChangeForm={handleChangeForm}
-      handleChangeAge={handleChangeAge}
-      handleChangeDate={handleChangeDate}
     />
   );
 }

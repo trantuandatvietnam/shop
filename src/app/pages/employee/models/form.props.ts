@@ -8,11 +8,9 @@ export interface employeeForm {
     position: string;
 }
 
-export interface IDialogProp {
-    showDialog?: boolean,
+export interface IFormProps {
     setShowDialog?: Dispatch<SetStateAction<boolean>>,
-    // employeeForm?: employeeForm,
-    // setEmployeeForm?: Dispatch<SetStateAction<{ name: string; age: number; address: string; startDate: string; position: string}>>,
+    employeeForm?: employeeForm,
     onSubmit?: (formValue: employeeForm) => void,
-
+    showDialog?: boolean
 }

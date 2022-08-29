@@ -1,6 +1,6 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { Button } from '@mui/material';
-import { Dispatch, SetStateAction } from 'react';
+import { IEmployeeProps } from '../../models/employee-template.props';
 import DialogComponent from '../dialog-create/dialog.component';
 import FilterComponent from '../search/search.component';
 import TableComponent from '../table/table.component';
@@ -8,10 +8,7 @@ import TableComponent from '../table/table.component';
 function EmployeeTemplate({
   showDialog,
   setShowDialog = () => null,
-}: {
-  showDialog: boolean;
-  setShowDialog: Dispatch<SetStateAction<boolean>>;
-}) {
+}: IEmployeeProps) {
   return (
     <div className="flex flex-col gap-y-[16px]">
       <DialogComponent showDialog={showDialog} setShowDialog={setShowDialog} />

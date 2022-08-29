@@ -20,15 +20,17 @@ function DialogTemplate({
   setShowDialog = () => null,
 }: IDialogProp) {
   const navigate = useNavigate();
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+    navigate('/employees');
+  };
+
   return (
     <Dialog
       open={showDialog || false}
       TransitionComponent={Transition}
       keepMounted
-      onClose={() => {
-        setShowDialog(false);
-        navigate('/employees');
-      }}
+      onClose={handleCloseDialog}
       aria-describedby="alert-dialog-slide-description"
     >
       <FormComponent showDialog={showDialog} setShowDialog={setShowDialog} />

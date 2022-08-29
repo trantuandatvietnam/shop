@@ -7,9 +7,10 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AppContext } from '../../../../app.context';
 import { IEmployee } from '../../../../models/employee.model';
+import { EmployeeContext } from '../../contexts/employee-data.context';
 import TableTemplate from './table.template';
+
 const LIMIT = 5;
 
 function TableComponent({
@@ -17,7 +18,8 @@ function TableComponent({
 }: {
   setShowDialog: Dispatch<SetStateAction<boolean>>;
 }) {
-  const appData = useContext(AppContext);
+  const employeeData = useContext(EmployeeContext);
+
   const navigate = useNavigate();
   const [showConfirmDelete, setShowConfirmDelete] = useState<boolean>(false);
   const [employeeList, setEmployeeList] = useState<IEmployee[]>([]);
@@ -38,14 +40,15 @@ function TableComponent({
   };
 
   useEffect(() => {
-    const employees = appData?.getEmployeeList();
+    const employees = employeeData?.getEmployeeList();
+
     if (employees && employees?.length > 0) {
       setEmployeeList(employees);
     }
-  }, [appData]);
+  }, [employeeData]);
 
   useEffect(() => {
-    const employees = appData?.getEmployeeList();
+    const employees = employeeData?.getEmployeeList();
     if (employees) {
       const employeeList = [...employees];
       setEmployeeList(() =>
@@ -55,7 +58,7 @@ function TableComponent({
         ),
       );
     }
-  }, [currentPage, appData]);
+  }, [currentPage, employeeData]);
 
   return (
     <div className="flex flex-col gap-y-[24px]">
@@ -68,8 +71,9 @@ function TableComponent({
       />
       <Pagination
         count={
-          appData?.getEmployeeList() && appData?.getEmployeeList().length > 0
-            ? Math.ceil(appData?.getEmployeeList().length / LIMIT)
+          employeeData?.getEmployeeList() &&
+          employeeData?.getEmployeeList().length > 0
+            ? Math.ceil(employeeData?.getEmployeeList().length / LIMIT)
             : 0
         }
         page={currentPage}

@@ -9,8 +9,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { ITableProps } from '../../models/table.props.model';
-import ConfirmDeleteDialog from '../../utils/confirm-delete-dialog.component';
 import { formatDate } from '../../utils/formartDate';
+import ConfirmDeleteDialog from '../confirm-delete/confirm.component';
 
 const cols = [
   '#ID',
@@ -31,7 +31,7 @@ export default function TableTemplate({
   onClickEditBtn,
 }: ITableProps) {
   return (
-    <TableContainer component={Paper}>
+    <TableContainer sx={{ minHeight: '408px' }} component={Paper}>
       <Table sx={{ minWidth: '1200px' }} aria-label="simple table">
         <TableHead>
           <TableRow>
@@ -40,14 +40,9 @@ export default function TableTemplate({
                 key={col}
                 sx={{ fontWeight: 'bold' }}
                 align={
-                  col === '#ID' ||
-                  col === 'Age' ||
-                  col === 'Starting Date' ||
-                  col === 'Date Created'
-                    ? 'center'
-                    : col === 'Actions'
-                    ? 'right'
-                    : 'left'
+                  col === 'Name' || col === 'Address' || col === 'Position'
+                    ? 'left'
+                    : 'center'
                 }
               >
                 {col}
